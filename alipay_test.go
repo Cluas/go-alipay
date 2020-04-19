@@ -43,3 +43,13 @@ func TestClient_Sign(t *testing.T) {
 	}
 
 }
+
+func TestClient_VerifySign(t *testing.T) {
+	publicKey := `MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB`
+	sign := `SnAwVaV8YCy3CYiJymlP+kEwxru6uzS4Ym5VDrUZPWgkqnElkq2zRnyigU2k9hXJHdYXZ2JPIyyGx7jufDn4I6IJrTqqhCOC4q254acls9KM/dXjBYYB0QYORG7DqCYXgEz5TGXHkE56gVac4PbqIt/9wnY9o6LBTpfc2fh96+I=`
+	c := NewClient(nil, PublicKey(publicKey), SignType("RSA"))
+	err := c.VerifySign([]byte(`{"code":"10000","msg":"Success","avatar":"https:\/\/tfs.alipayobjects.com\/images\/partner\/T15ABtXk8bXXXXXXXX","city":"杭州市","gender":"m","is_certified":"T","is_student_certified":"F","nick_name":"WinWen","province":"浙江省","user_id":"2088912161915762","user_status":"T","user_type":"2"}`), sign)
+	if err != nil {
+		t.Errorf("Client.SiVerifySigngn returned unexcept err: %v", err)
+	}
+}
