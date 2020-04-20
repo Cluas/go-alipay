@@ -6,7 +6,6 @@ import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -15,6 +14,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -25,50 +25,65 @@ const (
 	userAgent      = "go-alipay"
 )
 
+// Options 公共请求参数
 type Options struct {
-	AppID        string
-	PrivateKey   string
-	PublicKey    string
-	Format       string
-	Charset      string
-	SignType     string
-	Version      string
-	NotifyURL    string
-	AppAuthToken string
+	AppID      string // 支付宝分配给开发者的应用ID
+	Format     string // 仅支持JSON
+	Charset    string // 请求使用的编码格式，如utf-8,gbk,gb2312等
+	SignType   string // 商户生成签名字符串所使用的签名算法类型，目前支持RSA2和RSA，推荐使用RSA2
+	Version    string // 调用的接口版本，固定为：1.0
+	BizContent string // 请求参数的集合
 }
 
+// Option 参数配置方法
 type Option func(*Options)
 
+// AppID 支付宝分配给开发者的应用ID
 func AppID(appID string) Option {
 	return func(o *Options) {
 		o.AppID = appID
 	}
 }
 
-func PrivateKey(privateKey string) Option {
-	return func(o *Options) {
-		o.PrivateKey = privateKey
+// ValueOptions 可选配置参数
+type ValueOptions func(values url.Values)
+
+// NotifyURL 支付宝服务器主动通知商户服务器里指定的页面http/https路径
+func NotifyURL(notifyURL string) ValueOptions {
+	return func(v url.Values) {
+		v.Set("notify_url", notifyURL)
 	}
 }
 
-func PublicKey(publicKey string) Option {
-	return func(o *Options) {
-		o.PublicKey = publicKey
+// AuthToken 针对用户授权接口，获取用户相关数据时，用于标识用户授权关系
+func AuthToken(authToken string) ValueOptions {
+	return func(v url.Values) {
+		v.Set("auth_token", authToken)
 	}
 }
 
+// AppAuthToken 第三方应用授权
+func AppAuthToken(AppAuthToken string) ValueOptions {
+	return func(o url.Values) {
+		o.Set("app_auth_token", AppAuthToken)
+	}
+}
+
+// Format 仅支持JSON
 func Format(format string) Option {
 	return func(o *Options) {
 		o.Format = format
 	}
 }
 
+// Charset 请求使用的编码格式，如utf-8,gbk,gb2312等
 func Charset(charset string) Option {
 	return func(o *Options) {
 		o.Charset = charset
 	}
 }
 
+// SignType 商户生成签名字符串所使用的签名算法类型，目前支持RSA2和RSA，推荐使用RSA
 func SignType(signType string) Option {
 	return func(o *Options) {
 		o.SignType = signType
@@ -87,28 +102,49 @@ type Client struct {
 
 	o *Options
 
+	PrivateKey *rsa.PrivateKey
+	PublicKey  *rsa.PublicKey
+
 	// User agent used when communicating with the Alipay API.
 	UserAgent string
+
+	common service // Reuse a single struct instead of allocating one for each service on the heap.
+
+	User *UserService
+}
+
+type service struct {
+	client *Client
 }
 
 // NewClient returns a new Alipay API client. If a nil httpClient is
 // provided, a new http.Client will be used. To use API methods which require
 // authentication, provide an http.Client that will perform the authentication
 // for you (such as that provided by the golang.org/x/oauth2 library).
-func NewClient(httpClient *http.Client, setters ...Option) *Client {
+func NewClient(httpClient *http.Client, privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey, setters ...Option) *Client {
 	if httpClient == nil {
 		httpClient = &http.Client{}
 	}
-	o := &Options{
+	options := &Options{
 		Format:   "JSON",
-		Charset:  "utf8",
+		Charset:  "utf-8",
 		SignType: "RSA2",
+		Version:  "1.0",
 	}
 	for _, setter := range setters {
-		setter(o)
+		setter(options)
 	}
 	baseURL, _ := url.Parse(defaultBaseURL)
-	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: userAgent, o: o}
+	c := &Client{
+		client:     httpClient,
+		PrivateKey: privateKey,
+		PublicKey:  publicKey,
+		BaseURL:    baseURL,
+		UserAgent:  userAgent,
+		o:          options,
+	}
+	c.common.client = c
+	c.User = (*UserService)(&c.common)
 	return c
 }
 
@@ -117,18 +153,23 @@ func NewClient(httpClient *http.Client, setters ...Option) *Client {
 // Relative URLs should always be specified without a preceding slash. If
 // specified, the value pointed to by body is JSON encoded and included as the
 // request body.
-func (c *Client) NewRequest(method, apiMethod string, content interface{}) (*http.Request, error) {
-	var buf *bytes.Buffer
-	if content == nil {
-		return nil, errors.New("content is required")
-	}
+func (c *Client) NewRequest(method, apiMethod string, bizContent interface{}, setters ...ValueOptions) (*http.Request, error) {
+	var (
+		buf  *bytes.Buffer
+		sign string
+		err  error
+		req  *http.Request
+	)
 	buf = &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
 	enc.SetEscapeHTML(false)
-	err := enc.Encode(content)
-	if err != nil {
-		return nil, err
+	if bizContent != nil {
+		err = enc.Encode(bizContent)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	v := url.Values{}
 	v.Set("app_id", c.o.AppID)
 	v.Set("method", apiMethod)
@@ -136,29 +177,34 @@ func (c *Client) NewRequest(method, apiMethod string, content interface{}) (*htt
 	v.Set("charset", c.o.Charset)
 	v.Set("sign_type", c.o.SignType)
 	v.Set("timestamp", time.Now().Format("2006-01-02 15:04:05"))
-	v.Set("version", "1.0")
+	v.Set("version", c.o.Version)
 	v.Set("biz_content", buf.String())
-	if c.o.AppAuthToken != "" {
-		v.Set("app_auth_token", c.o.AppAuthToken)
+
+	for _, setter := range setters {
+		setter(v)
 	}
-	if c.o.NotifyURL != "" {
-		v.Set("notify_url", c.o.NotifyURL)
-	}
-	sign, err := c.Sign(v.Encode())
+
+	sign, err = c.Sign(v)
 	if err != nil {
 		return nil, err
 	}
 	v.Set("sign", sign)
 
-	req, err := http.NewRequest(method, c.BaseURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
 	switch method {
 	case http.MethodPost:
-		req.Form = v
+		req, err = http.NewRequest(method, c.BaseURL.String(), strings.NewReader(v.Encode()))
+		if err != nil {
+			return nil, err
+		}
+		v = req.URL.Query()
+		v.Set("charset", c.o.Charset)
+		req.URL.RawQuery = v.Encode()
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	case http.MethodGet:
+		req, err = http.NewRequest(method, c.BaseURL.String(), nil)
+		if err != nil {
+			return nil, err
+		}
 		req.URL.RawQuery = v.Encode()
 	default:
 		return nil, errors.New("unsupported method")
@@ -170,23 +216,41 @@ func (c *Client) NewRequest(method, apiMethod string, content interface{}) (*htt
 	return req, nil
 }
 
-func (c *Client) Sign(urlStr string) (string, error) {
+// Sign 参数签名
+func (c *Client) Sign(values url.Values) (string, error) {
+	if c.PrivateKey == nil {
+		return "", nil
+	}
+	var buf strings.Builder
+	keys := make([]string, 0, len(values))
+	for k := range values {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		vs := values[k]
+		for _, v := range vs {
+			if v == "" {
+				continue
+			}
+			if buf.Len() > 0 {
+				buf.WriteByte('&')
+			}
+			buf.WriteString(k)
+			buf.WriteByte('=')
+			buf.WriteString(v)
+		}
+	}
+	valuesStr := buf.String()
 
 	signType := crypto.SHA256
 	if c.o.SignType == "RSA" {
 		signType = crypto.SHA1
 	}
 	h := crypto.Hash.New(signType)
-	h.Write([]byte(urlStr))
-	encodedKey, err := base64.StdEncoding.DecodeString(c.o.PrivateKey)
-	if err != nil {
-		return "", err
-	}
-	privateKey, err := x509.ParsePKCS1PrivateKey(encodedKey)
-	if err != nil {
-		return "", err
-	}
-	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKey, signType, h.Sum(nil))
+	h.Write([]byte(valuesStr))
+
+	signature, err := rsa.SignPKCS1v15(rand.Reader, c.PrivateKey, signType, h.Sum(nil))
 	if err != nil {
 		return "", err
 	}
@@ -245,29 +309,13 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 			return nil, ctx.Err()
 		default:
 		}
-
-		// If the error type is *url.Error, sanitize its URL before returning.
-		if e, ok := err.(*url.Error); ok {
-			if url, err := url.Parse(e.URL); err == nil {
-				e.URL = url.String()
-				return nil, e
-			}
-		}
-
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var apiMethod string
-	switch req.Method {
-	case http.MethodGet:
-		apiMethod = req.URL.Query().Get("method")
-	default:
-		apiMethod = req.Form.Get("method")
-	}
 	response := &Response{resp}
 
-	err = c.CheckResponse(resp, apiMethod)
+	err = c.CheckResponse(resp)
 	if err != nil {
 		return response, err
 	}
@@ -289,48 +337,50 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	return response, err
 }
 
-func (c *Client) CheckResponse(r *http.Response, apiMethod string) error {
-	var (
-		respStr, sign string
-		respContent   []byte
-	)
+// CheckResponse 检查返回内容
+func (c *Client) CheckResponse(r *http.Response) error {
 	errorResponse := &ErrorResponse{Response: r}
 	data, err := ioutil.ReadAll(r.Body)
+	var resp, sign []byte
 	if err == nil && data != nil {
-		dataStr := string(data)
-		respNode := strings.Replace(apiMethod, ".", "_", -1) + "_response"
-		respIdx := strings.Index(dataStr, respNode)
-		signIdx := strings.Index(dataStr, "sign")
+		obj := make(map[string]json.RawMessage)
+		if err = json.Unmarshal(data, &obj); err != nil {
+			return err
+		}
 
-		if signIdx > respIdx {
-			respStr = dataStr[respIdx+len(respNode)+2 : signIdx-2]
-			sign = dataStr[signIdx+6:]
-		} else {
-			respStr = dataStr[respIdx+len(respNode)+2:]
-			sign = dataStr[signIdx+6 : respIdx-2]
+		for k, v := range obj {
+			if strings.Contains(k, "response") {
+				resp = v
+				break
+			}
 		}
-		respContent = []byte(respStr)
-		json.Unmarshal(respContent, errorResponse)
-		if err := c.VerifySign(respContent, sign); err != nil {
-			return errors.New("invalid signature")
+		sign = obj["sign"]
+		if len(sign) > 0 {
+			var signStr string
+			if err = json.Unmarshal(sign, &signStr); err != nil {
+				return fmt.Errorf("反序列化签名失败: %w", err)
+			}
+			if err = c.VerifySign(resp, signStr); err != nil {
+				return fmt.Errorf("支付宝同步请求签名验证不通过: %w", err)
+			}
 		}
+		if err = json.Unmarshal(resp, &errorResponse); err != nil {
+			return fmt.Errorf("解析支付宝返回结构失败: %w", err)
+		}
+
 	}
 
 	if errorResponse.Code == "10000" {
-		buf := bytes.NewBuffer(respContent)
+		buf := bytes.NewBuffer(resp)
 		r.Body = ioutil.NopCloser(buf)
 		return nil
 	}
 	return errorResponse
 }
 
+// VerifySign 校验同步请求返回参数
 func (c *Client) VerifySign(content []byte, sign string) error {
 	signData, err := base64.StdEncoding.DecodeString(sign)
-	if err != nil {
-		return err
-	}
-	public, _ := base64.StdEncoding.DecodeString(c.o.PublicKey)
-	pub, err := x509.ParsePKIXPublicKey(public)
 	if err != nil {
 		return err
 	}
@@ -341,5 +391,5 @@ func (c *Client) VerifySign(content []byte, sign string) error {
 	}
 	h := crypto.Hash.New(signType)
 	h.Write(content)
-	return rsa.VerifyPKCS1v15(pub.(*rsa.PublicKey), signType, h.Sum(nil), signData)
+	return rsa.VerifyPKCS1v15(c.PublicKey, signType, h.Sum(nil), signData)
 }
