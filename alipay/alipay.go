@@ -23,6 +23,8 @@ import (
 const (
 	defaultBaseURL = "https://openapi.alipay.com/gateway.do"
 	userAgent      = "go-alipay"
+
+	timeLayout = "2006-01-02 15:04:05"
 )
 
 // Options 公共请求参数
@@ -110,7 +112,8 @@ type Client struct {
 
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
-	User *UserService
+	App  *AppService
+	Mini *MiniService
 }
 
 type service struct {
@@ -144,7 +147,9 @@ func NewClient(httpClient *http.Client, privateKey *rsa.PrivateKey, publicKey *r
 		o:          options,
 	}
 	c.common.client = c
-	c.User = (*UserService)(&c.common)
+	c.App = (*AppService)(&c.common)
+	c.Mini = (*MiniService)(&c.common)
+
 	return c
 }
 
@@ -176,7 +181,7 @@ func (c *Client) NewRequest(method, apiMethod string, bizContent interface{}, se
 	v.Set("format", c.o.Format)
 	v.Set("charset", c.o.Charset)
 	v.Set("sign_type", c.o.SignType)
-	v.Set("timestamp", time.Now().Format("2006-01-02 15:04:05"))
+	v.Set("timestamp", time.Now().Format(timeLayout))
 	v.Set("version", c.o.Version)
 	v.Set("biz_content", buf.String())
 

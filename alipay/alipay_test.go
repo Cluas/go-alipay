@@ -157,3 +157,68 @@ func TestClient_VerifySign(t *testing.T) {
 		t.Errorf("Client.SiVerifySigngn returned unexcept err: %v", err)
 	}
 }
+
+func TestAppAuthToken(t *testing.T) {
+	v := url.Values{}
+
+	setter := AppAuthToken("test")
+	setter(v)
+	got := v.Get("app_auth_token")
+	want := "test"
+
+	if got != want {
+		t.Errorf("AppAuthToken got %v, want %v", got, want)
+	}
+}
+
+func TestAppID(t *testing.T) {
+	o := Options{}
+
+	setter := AppID("test")
+	setter(&o)
+	got := o.AppID
+	want := "test"
+
+	if got != want {
+		t.Errorf("AppID got %v, want %v", got, want)
+	}
+}
+
+func TestAuthToken(t *testing.T) {
+	v := url.Values{}
+
+	setter := AuthToken("test")
+	setter(v)
+	got := v.Get("auth_token")
+	want := "test"
+
+	if got != want {
+		t.Errorf("AppAuthToken got %v, want %v", got, want)
+	}
+}
+
+func TestCharset(t *testing.T) {
+	o := Options{}
+
+	setter := Charset("utf-8")
+	setter(&o)
+	got := o.Charset
+	want := "utf-8"
+
+	if got != want {
+		t.Errorf("Charset got %v, want %v", got, want)
+	}
+}
+
+func TestFormat(t *testing.T) {
+	o := Options{}
+
+	setter := Format("JSON")
+	setter(&o)
+	got := o.Format
+	want := "JSON"
+
+	if got != want {
+		t.Errorf("Charset got %v, want %v", got, want)
+	}
+}
