@@ -2,7 +2,7 @@
 Go 支付宝小程序SDK
 
 [![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Cluas/go-alipay)
-[![GoReport](https://goreportcard.com/badge/github.com/Cluas/go-alipay)](https://codecov.io/gh/Cluas/go-alipay)
+[![GoReport](https://goreportcard.com/badge/github.com/Cluas/go-alipay)](https://goreportcard.com/report/github.com/Cluas/go-alipay)
 [![Test Status](https://github.com/Cluas/go-alipay/workflows/tests/badge.svg)](https://github.com/Cluas/go-alipay/actions?query=workflow%3Atests)
 [![Test Coverage](https://codecov.io/gh/Cluas/go-alipay/branch/master/graph/badge.svg)](https://codecov.io/gh/Cluas/go-alipay)
 
