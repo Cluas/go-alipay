@@ -29,7 +29,7 @@ func main() {
 	privateKey, _ := x509.ParsePKCS1PrivateKey(encodedKey)
 	publicKey, _ := base64.StdEncoding.DecodeString("your_public_key")
 	pub, _ := x509.ParsePKIXPublicKey(publicKey)
-	client := alipay.NewClient(nil, privateKey, pub.(*rsa.PublicKey))
+	client := alipay.NewClient(nil, privateKey, pub.(*rsa.PublicKey), alipay.AppID("your_app_id"))
 
 	biz := alipay.OnlineVersionBiz{
 		AppVersion: "v0.0.1",
@@ -44,6 +44,8 @@ func main() {
 }
 ```
 ### 目前已对接的接口
+- [x] alipay.open.mini.baseinfo.query 查询小程序基础信息
+
 - [x] alipay.open.app.members.create 创建应用成员
 - [x] alipay.open.app.members.delete 删除应用成员
 - [x] alipay.open.app.members.query  查询应用成员列表
