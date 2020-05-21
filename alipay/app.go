@@ -84,3 +84,30 @@ func (s *AppService) QueryAppMembers(ctx context.Context, biz *QueryAppMembersBi
 	}
 	return resp, nil
 }
+
+// CreateAppQRCodeResp 生成小程序推广二维码返回值
+type CreateAppQRCodeResp struct {
+	QRCodeURL string `json:"qr_code_url"`
+}
+
+// CreateAppQRCodeResp 生成小程序推广二维码
+type CreateAppQRCodeBiz struct {
+	URLParam   string `json:"url_param"`   //小程序中能访问到的页面路径。
+	QueryParam string `json:"query_param"` //小程序的启动参数，打开小程序的query，在小程序onLaunch的方法中获取。
+	Describe   string `json:"describe"`    //对应的二维码描述。
+}
+
+// CreateAppQRCode 生成小程序推广二维码
+func (s *AppService) CreateAppQRCode(ctx context.Context, biz *CreateAppQRCodeBiz, opts ...ValueOptions) (*CreateAppQRCodeResp, error) {
+	apiMethod := "alipay.open.app.qrcode.create"
+	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	if err != nil {
+		return nil, err
+	}
+	resp := new(CreateAppQRCodeResp)
+	_, err = s.client.Do(ctx, req, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

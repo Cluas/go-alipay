@@ -49,6 +49,7 @@ func main() {
 - [x] alipay.open.app.members.create 创建应用成员
 - [x] alipay.open.app.members.delete 删除应用成员
 - [x] alipay.open.app.members.query  查询应用成员列表
+- [x] alipay.open.app.qrcode.create  生成小程序推广二维码
 
 - [x] alipay.open.mini.experience.create 生成小程序体验版
 - [x] alipay.open.mini.experience.query  小程序体验版状态查询
