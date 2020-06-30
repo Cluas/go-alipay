@@ -4,6 +4,26 @@ import (
 	"context"
 )
 
+// QueryVersionListResp 查询小程序列表返回值
+type QueryVersionListResp struct {
+	AppVersions []string `json:"app_versions"`
+}
+
+// QueryVersionList 查询小程序列表
+func (s *MiniService) QueryVersionList(ctx context.Context, opts ...ValueOptions) (*QueryVersionListResp, error) {
+	apiMethod := "alipay.open.mini.version.list.query"
+	req, err := s.client.NewRequest("GET", apiMethod, nil, opts...)
+	if err != nil {
+		return nil, err
+	}
+	resp := new(QueryVersionListResp)
+	_, err = s.client.Do(ctx, req, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 // DeleteVersionBiz 小程序删除版本
 type DeleteVersionBiz struct {
 	AppVersion string `json:"app_version"` //小程序版本号
@@ -268,7 +288,7 @@ type MiniAppCategoryInfo struct {
 type MiniPackageInfo struct {
 	PackageName     string `json:"package_name"`
 	PackageDesc     string `json:"package_desc"`
-	DocUrl          string `json:"doc_url"`
+	DocURL          string `json:"doc_url"`
 	Status          string `json:"status"`
 	PackageOpenType string `json:"package_open_type"`
 }
@@ -314,4 +334,31 @@ func (s *MiniService) QueryVersionDetail(ctx context.Context, biz *QueryVersionD
 		return nil, err
 	}
 	return versionDetail, nil
+}
+
+// QueryVersionBuildBiz 小程序查询版本构建状态
+type QueryVersionBuildBiz struct {
+	AppVersion string `json:"app_version"` //小程序版本号, 必选
+	BundleID   string `json:"bundle_id"`   //端参数，可不选，默认支付宝端
+}
+
+// QueryVersionBuildResp  小程序查询版本构建状态resp
+type QueryVersionBuildResp struct {
+	NeedRotation string `json:"need_rotation"` // 是否需要轮询
+	CreateStatus string `json:"create_status"` // 创建版本的状态，0-构建排队中；1-正在构建；2-构建成功；3-构建失败；5-构建超时；6-版本创建成功
+}
+
+// QueryVersionBuild 小程序查询版本构建状态
+func (s *MiniService) QueryVersionBuild(ctx context.Context, biz *QueryVersionBuildBiz, opts ...ValueOptions) (*QueryVersionBuildResp, error) {
+	apiMethod := "alipay.open.mini.version.detail.query"
+	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	if err != nil {
+		return nil, err
+	}
+	resp := new(QueryVersionBuildResp)
+	_, err = s.client.Do(ctx, req, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

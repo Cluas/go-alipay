@@ -538,7 +538,7 @@ func TestMiniService_QueryVersionDetail(t *testing.T) {
 			{
 				PackageName:     "基础能力",
 				PackageDesc:     "这是通用能力",
-				DocUrl:          "http://doc.aaa.alipay.com",
+				DocURL:          "http://doc.aaa.alipay.com",
 				Status:          "valid",
 				PackageOpenType: "APPLY",
 			},
@@ -667,5 +667,111 @@ func TestMiniService_UploadVersion_failed(t *testing.T) {
 	})
 	if err == nil {
 		t.Errorf("Mini.UploadVersion excepted error")
+	}
+}
+
+func TestMiniService_QueryVersionList(t *testing.T) {
+	client, mux, _, tearDown := setup()
+	defer tearDown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `{
+							"alipay_open_mini_version_list_query_response": {
+								"code": "10000",
+								"msg": "Success",
+								"app_versions": [
+									"0.0.1"
+								]
+							}
+						}`)
+	})
+
+	got, err := client.Mini.QueryVersionList(context.Background())
+	if err != nil {
+		t.Errorf("Mini.QueryVersionList returned unexcepted error: %v", err)
+	}
+	want := &QueryVersionListResp{
+		AppVersions: []string{"0.0.1"},
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Mini.QueryVersionList got %+v, want %+v", got, want)
+	}
+}
+
+func TestMiniService_QueryVersionList_failed(t *testing.T) {
+	client, mux, _, tearDown := setup()
+	defer tearDown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `{
+							"alipay_open_mini_version_list_query_response": {
+							        "code": "20000",
+									"msg": "Service Currently Unavailable",
+									"sub_code": "isp.unknow-error",
+									"sub_msg": "系统繁忙"
+							}
+						}`)
+	})
+	_, err := client.Mini.QueryVersionList(context.Background())
+	if err == nil {
+		t.Errorf("Mini.QueryVersionList excepted error")
+	}
+}
+
+func TestMiniService_QueryVersionBuild(t *testing.T) {
+	client, mux, _, tearDown := setup()
+	defer tearDown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `{
+							"alipay_open_mini_version_build_query_response": {
+								"code": "10000",
+								"msg": "Success",
+								"need_rotation": "true",
+								"create_status": "6"
+							}
+						}`)
+	})
+
+	got, err := client.Mini.QueryVersionBuild(context.Background(), &QueryVersionBuildBiz{
+		AppVersion: "0.0.1",
+		BundleID:   "com.alipay.alipaywallet",
+	})
+	if err != nil {
+		t.Errorf("Mini.QueryVersionBuild returned unexcepted error: %v", err)
+	}
+	want := &QueryVersionBuildResp{
+		NeedRotation: "true",
+		CreateStatus: "6",
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Mini.QueryVersionBuild got %+v, want %+v", got, want)
+	}
+}
+
+func TestMiniService_QueryVersionBuild_failed(t *testing.T) {
+	client, mux, _, tearDown := setup()
+	defer tearDown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		fmt.Fprint(w, `{
+							"alipay_open_mini_version_build_query_response": {
+							        "code": "20000",
+									"msg": "Service Currently Unavailable",
+									"sub_code": "isp.unknow-error",
+									"sub_msg": "系统繁忙"
+							}
+						}`)
+	})
+	_, err := client.Mini.QueryVersionBuild(context.Background(), &QueryVersionBuildBiz{
+		AppVersion: "0.0.1",
+		BundleID:   "com.alipay.alipaywallet",
+	})
+	if err == nil {
+		t.Errorf("Mini.QueryVersionBuild excepted error")
 	}
 }

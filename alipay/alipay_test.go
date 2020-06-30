@@ -5,7 +5,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -98,7 +97,7 @@ func TestDo_nilContext(t *testing.T) {
 	req, _ := client.NewRequest("GET", ".", nil)
 	_, err := client.Do(nil, req, nil)
 
-	if !reflect.DeepEqual(err, errors.New("context must be non-nil")) {
+	if !reflect.DeepEqual(err.Error(), "context must be non-nil") {
 		t.Errorf("Expected context must be non-nil error")
 	}
 }

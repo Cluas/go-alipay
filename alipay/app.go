@@ -90,7 +90,7 @@ type CreateAppQRCodeResp struct {
 	QRCodeURL string `json:"qr_code_url"`
 }
 
-// CreateAppQRCodeResp 生成小程序推广二维码
+// CreateAppQRCodeBiz 生成小程序推广二维码
 type CreateAppQRCodeBiz struct {
 	URLParam   string `json:"url_param"`   //小程序中能访问到的页面路径。
 	QueryParam string `json:"query_param"` //小程序的启动参数，打开小程序的query，在小程序onLaunch的方法中获取。
