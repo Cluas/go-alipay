@@ -43,28 +43,7 @@ func main() {
 
 }
 ```
-### 目前已对接的接口
-- [x] alipay.open.mini.baseinfo.query 查询小程序基础信息
-
-- [x] alipay.open.app.members.create 创建应用成员
-- [x] alipay.open.app.members.delete 删除应用成员
-- [x] alipay.open.app.members.query  查询应用成员列表
-- [x] alipay.open.app.qrcode.create  生成小程序推广二维码
-
-- [x] alipay.open.mini.experience.create 生成小程序体验版
-- [x] alipay.open.mini.experience.query  小程序体验版状态查询
-- [x] alipay.open.mini.experience.cancel 小程序取消体验版
-
-- [x] alipay.open.mini.version.delete 小程序删除版本
-- [x] alipay.open.mini.version.audit.apply 小程序提交审核
-- [x] alipay.open.mini.version.audit.cancel 小程序撤销审核
-- [x] alipay.open.mini.version.audited.cancel 小程序退回开发
-- [x] alipay.open.mini.version.online 小程序上架
-- [x] alipay.open.mini.version.offline 小程序下架
-- [x] alipay.open.mini.version.roolback 小程序回滚
-- [x] alipay.open.mini.version.gray.online 小程序灰度上架
-- [x] alipay.open.mini.version.gray.cancel 小程序结束灰度
-- [x] alipay.open.mini.version.upload 小程序基于模板上传版本
-- [x] alipay.open.mini.version.detail.query 小程序版本详情查询
+### 支持所有已公布的小程序API
+文档地址: https://opendocs.alipay.com/apis/api_49/
 
 
