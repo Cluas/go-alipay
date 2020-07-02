@@ -46,40 +46,40 @@ func (s *MiniService) DeleteVersion(ctx context.Context, biz *DeleteVersionBiz, 
 
 // ApplyVersionAuditBiz 小程序提交审核
 type ApplyVersionAuditBiz struct {
-	LicenseName             string        `json:"license_name"`
-	FirstLicensePic         []byte        `json:"first_license_pic"`
-	SecondLicensePic        []byte        `json:"second_license_pic"`
-	ThirdLicensePic         []byte        `json:"third_license_pic"`
-	FourthLicensePic        []byte        `json:"fourth_license_pic"`
-	FifthLicensePic         []byte        `json:"fifth_license_pic"`
-	LicenseValidDate        string        `json:"license_valid_date"`
-	OutDoorPic              []byte        `json:"out_door_pic"`
+	LicenseName             string        `json:"license_name,omitempty"`
+	FirstLicensePic         []byte        `json:"first_license_pic,omitempty"`
+	SecondLicensePic        []byte        `json:"second_license_pic,omitempty"`
+	ThirdLicensePic         []byte        `json:"third_license_pic,omitempty"`
+	FourthLicensePic        []byte        `json:"fourth_license_pic,omitempty"`
+	FifthLicensePic         []byte        `json:"fifth_license_pic,omitempty"`
+	LicenseValidDate        string        `json:"license_valid_date,omitempty"`
+	OutDoorPic              []byte        `json:"out_door_pic,omitempty"`
 	AppVersion              string        `json:"app_version"`
-	AppName                 string        `json:"app_name"`
-	AppEnglishName          string        `json:"app_english_name"`
-	AppSlogan               string        `json:"app_slogan"`
-	AppLogo                 []byte        `json:"app_logo"`
-	AppCategoryIDs          string        `json:"app_category_ids"`
-	AppDesc                 string        `json:"app_desc"`
-	ServicePhone            string        `json:"service_phone"`
-	ServiceEmail            string        `json:"service_email"`
+	AppName                 string        `json:"app_name,omitempty"`
+	AppEnglishName          string        `json:"app_english_name,omitempty"`
+	AppSlogan               string        `json:"app_slogan,omitempty"`
+	AppLogo                 []byte        `json:"app_logo,omitempty"`
+	AppCategoryIDs          string        `json:"app_category_ids,omitempty"`
+	AppDesc                 string        `json:"app_desc,omitempty"`
+	ServicePhone            string        `json:"service_phone,omitempty"`
+	ServiceEmail            string        `json:"service_email,omitempty"`
 	VersionDesc             string        `json:"version_desc"`
-	Memo                    string        `json:"memo"`
+	Memo                    string        `json:"memo,omitempty"`
 	RegionType              string        `json:"region_type"`
-	ServiceRegionInfo       []*RegionInfo `json:"service_region_info"`
-	FirstScreenShot         []byte        `json:"first_screen_shot"`
-	SecondScreenShot        []byte        `json:"second_screen_shot"`
-	ThirdScreenShot         []byte        `json:"third_screen_shot"`
-	FourthScreenShot        []byte        `json:"fourth_screen_shot"`
-	FifthScreenShot         []byte        `json:"fifth_screen_shot"`
-	LicenseNo               string        `json:"license_no"`
-	FirstSpecialLicensePic  []byte        `json:"first_special_license_pic"`
-	SecondSpecialLicensePic []byte        `json:"second_special_license_pic"`
-	ThirdSpecialLicensePic  []byte        `json:"third_special_license_pic"`
-	TestAccount             string        `json:"test_accout"` // 官方拼写错误
-	TestPassword            string        `json:"test_password"`
-	TestFileName            []byte        `json:"test_file_name"`
-	BundleID                string        `json:"bundle_id"`
+	ServiceRegionInfo       []*RegionInfo `json:"service_region_info,omitempty"`
+	FirstScreenShot         []byte        `json:"first_screen_shot,omitempty"`
+	SecondScreenShot        []byte        `json:"second_screen_shot,omitempty"`
+	ThirdScreenShot         []byte        `json:"third_screen_shot,omitempty"`
+	FourthScreenShot        []byte        `json:"fourth_screen_shot,omitempty"`
+	FifthScreenShot         []byte        `json:"fifth_screen_shot,omitempty"`
+	LicenseNo               string        `json:"license_no,omitempty"`
+	FirstSpecialLicensePic  []byte        `json:"first_special_license_pic,omitempty"`
+	SecondSpecialLicensePic []byte        `json:"second_special_license_pic,omitempty"`
+	ThirdSpecialLicensePic  []byte        `json:"third_special_license_pic,omitempty"`
+	TestAccount             string        `json:"test_accout,omitempty"` // 官方拼写错误
+	TestPassword            string        `json:"test_password,omitempty"`
+	TestFileName            []byte        `json:"test_file_name,omitempty"`
+	BundleID                string        `json:"bundle_id,omitempty"`
 }
 
 // RegionInfo 省市区信息，当区域类型为LOCATION时，不能为空
@@ -95,7 +95,7 @@ type RegionInfo struct {
 // ApplyVersionAudit 小程序提交审核
 func (s *MiniService) ApplyVersionAudit(ctx context.Context, biz *ApplyVersionAuditBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.audit.apply"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequestWithoutBiz("POST", apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}

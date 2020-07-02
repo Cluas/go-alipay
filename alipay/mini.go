@@ -52,7 +52,7 @@ type ModifyBaseInfoBiz struct {
 // ModifyBaseInfo 小程序修改基础信息
 func (s *MiniService) ModifyBaseInfo(ctx context.Context, biz *ModifyBaseInfoBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.baseinfo.modify"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequestWithoutBiz("POST", apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}

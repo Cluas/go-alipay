@@ -160,10 +160,8 @@ func NewClient(httpClient *http.Client, privateKey *rsa.PrivateKey, publicKey *r
 // request body.
 func (c *Client) NewRequest(method, apiMethod string, bizContent interface{}, setters ...ValueOptions) (*http.Request, error) {
 	var (
-		buf  *bytes.Buffer
-		sign string
-		err  error
-		req  *http.Request
+		buf *bytes.Buffer
+		err error
 	)
 	buf = &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
@@ -188,7 +186,16 @@ func (c *Client) NewRequest(method, apiMethod string, bizContent interface{}, se
 	for _, setter := range setters {
 		setter(v)
 	}
+	return c.requestWithSign(method, v)
 
+}
+
+func (c *Client) requestWithSign(method string, v url.Values) (*http.Request, error) {
+	var (
+		sign string
+		err  error
+		req  *http.Request
+	)
 	sign, err = c.Sign(v)
 	if err != nil {
 		return nil, err
@@ -219,6 +226,24 @@ func (c *Client) NewRequest(method, apiMethod string, bizContent interface{}, se
 		req.Header.Set("User-Agent", c.UserAgent)
 	}
 	return req, nil
+}
+
+// NewRequestWithoutBiz 某些接口不按照套路出牌
+func (c *Client) NewRequestWithoutBiz(method, apiMethod string, body interface{}, setters ...ValueOptions) (*http.Request, error) {
+	v, _ := Values(body)
+	v.Set("app_id", c.o.AppID)
+	v.Set("method", apiMethod)
+	v.Set("format", c.o.Format)
+	v.Set("charset", c.o.Charset)
+	v.Set("sign_type", c.o.SignType)
+	v.Set("timestamp", time.Now().Format(timeLayout))
+	v.Set("version", c.o.Version)
+
+	for _, setter := range setters {
+		setter(v)
+	}
+
+	return c.requestWithSign(method, v)
 }
 
 // Sign 参数签名
