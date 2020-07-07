@@ -73,8 +73,8 @@ func TestAppService_DeleteMember(t *testing.T) {
 	})
 
 	err := client.App.DeleteMember(context.Background(), &DeleteMemberBiz{
-		LogonID: "test_id",
-		Role:    "DEVELOPER",
+		UserID: "test_id",
+		Role:   "DEVELOPER",
 	})
 	if err != nil {
 		t.Errorf("App.CreateMember returned unexcepted error: %v", err)
@@ -98,8 +98,8 @@ func TestAppService_DeleteMember_error(t *testing.T) {
 	})
 
 	err := client.App.DeleteMember(context.Background(), &DeleteMemberBiz{
-		LogonID: "test_id",
-		Role:    "DEVELOPER",
+		UserID: "test_id",
+		Role:   "DEVELOPER",
 	})
 
 	if err == nil {
