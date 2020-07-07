@@ -194,7 +194,7 @@ type RollbackVersionBiz struct {
 
 // RollbackVersion 小程序回滚
 func (s *MiniService) RollbackVersion(ctx context.Context, biz *RollbackVersionBiz, opts ...ValueOptions) error {
-	apiMethod := "alipay.open.mini.version.roolback"
+	apiMethod := "alipay.open.mini.version.rollback"
 	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
 	if err != nil {
 		return err

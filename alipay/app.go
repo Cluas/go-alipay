@@ -30,8 +30,8 @@ func (s *AppService) CreateMember(ctx context.Context, biz *CreateAppMemberBiz, 
 
 // DeleteMemberBiz 应用删除成员
 type DeleteMemberBiz struct {
-	LogonID string `json:"logon_id"` // 支付宝登录账号ID
-	Role    string `json:"role"`     //成员的角色类型，DEVELOPER-开发者，EXPERIENCER-体验者
+	UserID string `json:"user_id"` // 蚂蚁统一会员ID
+	Role   string `json:"role"`    //成员的角色类型，DEVELOPER-开发者，EXPERIENCER-体验者
 }
 
 // DeleteMember 应用删除成员，目前只支持小程序类型的应用使用
