@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -13,7 +14,7 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_audit_apply_response": {
 								"code": "10000",
@@ -24,18 +25,18 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 
 	err := client.Mini.ApplyVersionAudit(context.Background(), &ApplyVersionAuditBiz{
 		LicenseName:      "营业执照名称",
-		FirstLicensePic:  []byte("图片1"),
-		SecondLicensePic: []byte("图片2"),
-		ThirdLicensePic:  []byte("图片3"),
-		FourthLicensePic: []byte("图片4"),
-		FifthLicensePic:  []byte("图片5"),
+		FirstLicensePic:  os.NewFile(0, "图片1"),
+		SecondLicensePic: os.NewFile(0, "图片2"),
+		ThirdLicensePic:  os.NewFile(0, "图片3"),
+		FourthLicensePic: os.NewFile(0, "图片4"),
+		FifthLicensePic:  os.NewFile(0, "图片5"),
 		LicenseValidDate: "9999-12-31",
-		OutDoorPic:       []byte("OutDoorPic"),
+		OutDoorPic:       os.NewFile(0, "OutDoorPic"),
 		AppVersion:       "0.0.1",
 		AppName:          "小程序示例",
 		AppEnglishName:   "demo example",
 		AppSlogan:        "这是一个支付示例",
-		AppLogo:          []byte("AppLogo"),
+		AppLogo:          os.NewFile(0, "AppLogo"),
 		AppCategoryIDs:   "11_12;12_13",
 		AppDesc:          "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:     "13110101010",
@@ -53,18 +54,18 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 				AreaName:     "余杭区",
 			},
 		},
-		FirstScreenShot:         []byte("FirstScreenShot"),
-		SecondScreenShot:        []byte("SecondScreenShot"),
-		ThirdScreenShot:         []byte("ThirdScreenShot"),
-		FourthScreenShot:        []byte("FourthScreenShot"),
-		FifthScreenShot:         []byte("FifthScreenShot"),
+		FirstScreenShot:         os.NewFile(0, "FirstScreenShot"),
+		SecondScreenShot:        os.NewFile(0, "SecondScreenShot"),
+		ThirdScreenShot:         os.NewFile(0, "ThirdScreenShot"),
+		FourthScreenShot:        os.NewFile(0, "FourthScreenShot"),
+		FifthScreenShot:         os.NewFile(0, "FifthScreenShot"),
 		LicenseNo:               "LicenseNo",
-		FirstSpecialLicensePic:  []byte("FirstSpecialLicensePic"),
-		SecondSpecialLicensePic: []byte("SecondSpecialLicensePic"),
-		ThirdSpecialLicensePic:  []byte("ThirdSpecialLicensePic"),
+		FirstSpecialLicensePic:  os.NewFile(0, "FirstSpecialLicensePic"),
+		SecondSpecialLicensePic: os.NewFile(0, "SecondSpecialLicensePic"),
+		ThirdSpecialLicensePic:  os.NewFile(0, "ThirdSpecialLicensePic"),
 		TestAccount:             "TestAccount",
 		TestPassword:            "TestPassword",
-		TestFileName:            []byte("TestFileName"),
+		TestFileName:            os.NewFile(0, "TestFileName"),
 		BundleID:                "com.alipay.alipaywallet",
 	})
 
@@ -78,7 +79,7 @@ func TestMiniService_ApplyVersionAudit_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_members_query_response": {
 							        "code": "20000",
@@ -99,7 +100,7 @@ func TestMiniService_CancelGrayVersion(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_gray_cancel_response": {
 								"code": "10000",
@@ -122,7 +123,7 @@ func TestMiniService_CancelGrayVersion_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_gray_version_response": {
 							        "code": "20000",
@@ -146,7 +147,7 @@ func TestMiniService_CancelVersionAudit(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_audit_cancel_response": {
 								"code": "10000",
@@ -169,7 +170,7 @@ func TestMiniService_CancelVersionAudit_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_audit_cancel_response": {
 							        "code": "20000",
@@ -193,7 +194,7 @@ func TestMiniService_CancelVersionAudited(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_audited_cancel_response": {
 								"code": "10000",
@@ -216,7 +217,7 @@ func TestMiniService_CancelVersionAudited_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_audited_cancel_response": {
 							        "code": "20000",
@@ -240,7 +241,7 @@ func TestMiniService_DeleteVersion(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_delete_response": {
 								"code": "10000",
@@ -263,7 +264,7 @@ func TestMiniService_DeleteVersion_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_delete_response": {
 							        "code": "20000",
@@ -287,7 +288,7 @@ func TestMiniService_OfflineVersion(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_offline_response": {
 								"code": "10000",
@@ -310,7 +311,7 @@ func TestMiniService_OfflineVersion_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_offline_response": {
 							        "code": "20000",
@@ -334,7 +335,7 @@ func TestMiniService_OnlineGrayVersion(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_gray_offline_response": {
 								"code": "10000",
@@ -357,7 +358,7 @@ func TestMiniService_OnlineGrayVersion_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_gray_offline_response": {
 							        "code": "20000",
@@ -381,7 +382,7 @@ func TestMiniService_OnlineVersion(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_online_response": {
 								"code": "10000",
@@ -404,7 +405,7 @@ func TestMiniService_OnlineVersion_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_online_response": {
 							        "code": "20000",
@@ -428,7 +429,7 @@ func TestMiniService_QueryVersionDetail(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_detail_query_response": {
 								"code": "10000",
@@ -554,7 +555,7 @@ func TestMiniService_QueryVersionDetail_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_detail_query_response": {
 							        "code": "20000",
@@ -578,7 +579,7 @@ func TestMiniService_RollbackVersion(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_rollback_response": {
 								"code": "10000",
@@ -601,7 +602,7 @@ func TestMiniService_RollbackVersion_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_rollback_response": {
 							        "code": "20000",
@@ -625,7 +626,7 @@ func TestMiniService_UploadVersion(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_upload_response": {
 								"code": "10000",
@@ -651,7 +652,7 @@ func TestMiniService_UploadVersion_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_upload_response": {
 							        "code": "20000",
@@ -675,7 +676,7 @@ func TestMiniService_QueryVersionList(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_list_query_response": {
 								"code": "10000",
@@ -704,7 +705,7 @@ func TestMiniService_QueryVersionList_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_list_query_response": {
 							        "code": "20000",
@@ -725,7 +726,7 @@ func TestMiniService_QueryVersionBuild(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_build_query_response": {
 								"code": "10000",
@@ -757,7 +758,7 @@ func TestMiniService_QueryVersionBuild_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_version_build_query_response": {
 							        "code": "20000",

@@ -17,7 +17,7 @@ type CreateAppMemberBiz struct {
 // CreateMember 应用添加成员，目前只支持小程序类型的应用使用
 func (s *AppService) CreateMember(ctx context.Context, biz *CreateAppMemberBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.app.members.create"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ type DeleteMemberBiz struct {
 // DeleteMember 应用删除成员，目前只支持小程序类型的应用使用
 func (s *AppService) DeleteMember(ctx context.Context, biz *DeleteMemberBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.app.members.delete"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ type QueryAppMembersResp struct {
 // QueryAppMembers 应用查询成员列表，目前只支持小程序类型的应用
 func (s *AppService) QueryAppMembers(ctx context.Context, biz *QueryAppMembersBiz, opts ...ValueOptions) (*QueryAppMembersResp, error) {
 	apiMethod := "alipay.open.app.members.query"
-	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ type CreateAppQRCodeBiz struct {
 // CreateAppQRCode 生成小程序推广二维码
 func (s *AppService) CreateAppQRCode(ctx context.Context, biz *CreateAppQRCodeBiz, opts ...ValueOptions) (*CreateAppQRCodeResp, error) {
 	apiMethod := "alipay.open.app.qrcode.create"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}

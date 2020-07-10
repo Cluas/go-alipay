@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -13,7 +14,7 @@ func TestMiniService_QueryMiniBaseInfo(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 								"alipay_open_mini_baseinfo_query_response": {
 									"code": "10000",
@@ -62,7 +63,7 @@ func TestMiniService_ModifyBaseInfo(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_safedomain_create_response": {
 								"code": "10000",
@@ -75,7 +76,7 @@ func TestMiniService_ModifyBaseInfo(t *testing.T) {
 		AppName:         "小程序demo",
 		AppEnglishName:  "demoexample",
 		AppSlogan:       "这是一个小程序示例",
-		AppLogo:         []byte("123"),
+		AppLogo:         os.NewFile(0, "123"),
 		AppCategoryIDs:  "11_12;12_13",
 		AppDesc:         "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:    "13110101010",
@@ -92,7 +93,7 @@ func TestMiniService_ModifyBaseInfo_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_baseinfo_modify_response": {
 								"code": "20000",
@@ -106,7 +107,7 @@ func TestMiniService_ModifyBaseInfo_failed(t *testing.T) {
 		AppName:         "小程序demo",
 		AppEnglishName:  "demoexample",
 		AppSlogan:       "这是一个小程序示例",
-		AppLogo:         []byte("123"),
+		AppLogo:         os.NewFile(0, "123"),
 		AppCategoryIDs:  "11_12;12_13",
 		AppDesc:         "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:    "13110101010",
@@ -123,7 +124,7 @@ func TestMiniService_CreateSafeDomain(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 						"alipay_open_mini_safedomain_create_response": {
 							"code": "10000",
@@ -143,7 +144,7 @@ func TestMiniService_CreateSafeDomain_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 								"alipay_open_mini_baseinfo_query_response": {
 									"code": "20000",
@@ -164,7 +165,7 @@ func TestMiniService_DetectRiskContent(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_security_risk_content_detect_response": {
 								"code": "10000",
@@ -197,7 +198,7 @@ func TestMiniService_DetectRiskContent_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_security_risk_content_detect_response": {
 								"code": "20000",
@@ -220,7 +221,7 @@ func TestMiniService_QueryTinyAppExist(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_tinyapp_exist_query_response": {
 								"code": "10000",
@@ -247,7 +248,7 @@ func TestMiniService_QueryTinyAppExist_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_tinyapp_exist_query_response": {
 								"code": "20000",
@@ -270,7 +271,7 @@ func TestMiniService_QueryCategory(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_category_query_response": {
 								"code": "10000",
@@ -325,7 +326,7 @@ func TestMiniService_QueryCategory_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_category_query_response": {
 								"code": "20000",
@@ -348,7 +349,7 @@ func TestMiniService_CertifyIndividualBusiness(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_individual_business_certify_response": {
 								"code": "10000",
@@ -378,7 +379,7 @@ func TestMiniService_CertifyIndividualBusiness_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_individual_business_certify_response": {
 								"code": "20000",
@@ -402,7 +403,7 @@ func TestMiniService_SyncContent(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_content_sync_response": {
 								"code": "10000",
@@ -434,7 +435,7 @@ func TestMiniService_SyncContent_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_content_sync_response": {
 								"code": "20000",

@@ -1,6 +1,10 @@
 package alipay
 
-import "context"
+import (
+	"context"
+	"io"
+	"os"
+)
 
 // MiniService 小程序服务
 //
@@ -24,7 +28,7 @@ type BaseInfo struct {
 // QueryBaseInfo 查询小程序基础信息
 func (s *MiniService) QueryBaseInfo(ctx context.Context, opts ...ValueOptions) (*BaseInfo, error) {
 	apiMethod := "alipay.open.mini.baseinfo.query"
-	req, err := s.client.NewRequest("GET", apiMethod, nil, opts...)
+	req, err := s.client.NewRequest(apiMethod, nil, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -38,21 +42,62 @@ func (s *MiniService) QueryBaseInfo(ctx context.Context, opts ...ValueOptions) (
 
 // ModifyBaseInfoBiz 小程序修改基础信息
 type ModifyBaseInfoBiz struct {
-	AppName         string `json:"app_name,omitempty"`          // 小程序应用名称
-	AppEnglishName  string `json:"app_english_name,omitempty"`  // 小程序应用英文名称
-	AppSlogan       string `json:"app_slogan,omitempty"`        // 小程序应用简介，一句话描述小程序功能
-	AppLogo         []byte `json:"app_logo,omitempty"`          // 小程序应用logo图标，图片格式必须为：png、jpeg、jpg，建议上传像素为180*180
-	AppCategoryIDs  string `json:"app_category_ids,omitempty"`  // 11_12;12_13。小程序类目，格式为 第一个一级类目_第一个二级类目;第二个一级类目_第二个二级类目，详细类目可以参考https://docs.alipay.com/isv/10325
-	AppDesc         string `json:"app_desc,omitempty"`          // 小程序应用描述，20-200个字
-	ServicePhone    string `json:"service_phone,omitempty"`     // 小程序客服电话
-	ServiceEmail    string `json:"service_email,omitempty"`     // 小程序客服邮箱
-	MiniCategoryIDs string `json:"mini_category_ids,omitempty"` // 新小程序前台类目，一级与二级、三级用下划线隔开，最多可以选四个类目，类目之间;隔开。使用后不再读取app_category_ids值，老前台类目将废弃
+	AppName         string   `json:"app_name,omitempty"`          // 小程序应用名称
+	AppEnglishName  string   `json:"app_english_name,omitempty"`  // 小程序应用英文名称
+	AppSlogan       string   `json:"app_slogan,omitempty"`        // 小程序应用简介，一句话描述小程序功能
+	AppLogo         *os.File `json:"app_logo,omitempty"`          // 小程序应用logo图标，图片格式必须为：png、jpeg、jpg，建议上传像素为180*180
+	AppCategoryIDs  string   `json:"app_category_ids,omitempty"`  // 11_12;12_13。小程序类目，格式为 第一个一级类目_第一个二级类目;第二个一级类目_第二个二级类目，详细类目可以参考https://docs.alipay.com/isv/10325
+	AppDesc         string   `json:"app_desc,omitempty"`          // 小程序应用描述，20-200个字
+	ServicePhone    string   `json:"service_phone,omitempty"`     // 小程序客服电话
+	ServiceEmail    string   `json:"service_email,omitempty"`     // 小程序客服邮箱
+	MiniCategoryIDs string   `json:"mini_category_ids,omitempty"` // 新小程序前台类目，一级与二级、三级用下划线隔开，最多可以选四个类目，类目之间;隔开。使用后不再读取app_category_ids值，老前台类目将废弃
+}
+
+type MultiRender interface {
+	Params() map[string]string
+	MultipartParams() map[string]io.Reader
+}
+
+func (b *ModifyBaseInfoBiz) Params() map[string]string {
+	params := make(map[string]string)
+	if b.AppName != "" {
+		params["app_name"] = b.AppName
+	}
+	if b.AppEnglishName != "" {
+		params["app_english_name"] = b.AppEnglishName
+	}
+	if b.AppSlogan != "" {
+		params["app_slogan"] = b.AppSlogan
+	}
+	if b.AppCategoryIDs != "" {
+		params["app_category_ids"] = b.AppCategoryIDs
+	}
+	if b.AppDesc != "" {
+		params["app_desc"] = b.AppDesc
+	}
+	if b.ServicePhone != "" {
+		params["service_phone"] = b.ServicePhone
+	}
+	if b.ServiceEmail != "" {
+		params["service_email"] = b.ServiceEmail
+	}
+	if b.MiniCategoryIDs != "" {
+		params["mini_category_ids"] = b.MiniCategoryIDs
+	}
+	return params
+}
+func (b *ModifyBaseInfoBiz) MultipartParams() map[string]io.Reader {
+	params := make(map[string]io.Reader)
+	if b.AppLogo != nil {
+		params["app_logo"] = b.AppLogo
+	}
+	return params
 }
 
 // ModifyBaseInfo 小程序修改基础信息
 func (s *MiniService) ModifyBaseInfo(ctx context.Context, biz *ModifyBaseInfoBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.baseinfo.modify"
-	req, err := s.client.NewRequestWithoutBiz("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -71,7 +116,7 @@ type CreateSafeDomainBiz struct {
 // CreateSafeDomain 小程序添加域白名单
 func (s *MiniService) CreateSafeDomain(ctx context.Context, biz *CreateSafeDomainBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.safedomain.create"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -98,7 +143,7 @@ type DetectRiskContentResp struct {
 // DetectRiskContent 小程序风险内容检测服务
 func (s *MiniService) DetectRiskContent(ctx context.Context, biz *DetectRiskContentBiz, opts ...ValueOptions) (*DetectRiskContentResp, error) {
 	apiMethod := "alipay.security.risk.content.detect"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +169,7 @@ type QueryTinyAppExistResp struct {
 // QueryTinyAppExist 查询是否创建过小程序
 func (s *MiniService) QueryTinyAppExist(ctx context.Context, biz *QueryTinyAppExistBiz, opts ...ValueOptions) (*QueryTinyAppExistResp, error) {
 	apiMethod := "alipay.open.mini.tinyapp.exist.query"
-	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +207,7 @@ type QueryCategoryResp struct {
 // QueryCategory 小程序类目树查询
 func (s *MiniService) QueryCategory(ctx context.Context, biz *QueryCategoryBiz, opts ...ValueOptions) (*QueryCategoryResp, error) {
 	apiMethod := "alipay.open.mini.category.query"
-	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +234,7 @@ type CertifyIndividualBusinessResp struct {
 // CertifyIndividualBusiness 个人账户升级为个体工商户
 func (s *MiniService) CertifyIndividualBusiness(ctx context.Context, biz *CertifyIndividualBusinessBiz, opts ...ValueOptions) (*CertifyIndividualBusinessResp, error) {
 	apiMethod := "alipay.open.mini.individual.business.certify"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +263,7 @@ type SyncContentResp struct {
 // SyncContent 小程序内容接入
 func (s *MiniService) SyncContent(ctx context.Context, biz *SyncContentBiz, opts ...ValueOptions) (*SyncContentResp, error) {
 	apiMethod := "alipay.open.mini.content.sync"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}

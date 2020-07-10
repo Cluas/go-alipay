@@ -25,13 +25,6 @@ func setup() (client *Client, mux *http.ServeMux, serverURL string, tearDown fun
 	return
 }
 
-func testMethod(t *testing.T, r *http.Request, want string) {
-	t.Helper()
-	if got := r.Method; got != want {
-		t.Errorf("Request method: %v, want %v", got, want)
-	}
-}
-
 func TestClient_CheckResponse(t *testing.T) {
 	res := &http.Response{
 		Request:    &http.Request{},
@@ -75,13 +68,13 @@ func TestDo(t *testing.T) {
 	}
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"foo_response": {"A":"a", "code": "10000"}
 							}`)
 	})
 
-	req, _ := client.NewRequest("GET", "foo", nil)
+	req, _ := client.NewRequest("foo", nil)
 	body := new(foo)
 	client.Do(context.Background(), req, body)
 
@@ -94,7 +87,7 @@ func TestDo_nilContext(t *testing.T) {
 	client, _, _, tearDown := setup()
 	defer tearDown()
 
-	req, _ := client.NewRequest("GET", ".", nil)
+	req, _ := client.NewRequest(".", nil)
 	_, err := client.Do(nil, req, nil)
 
 	if !reflect.DeepEqual(err.Error(), "context must be non-nil") {

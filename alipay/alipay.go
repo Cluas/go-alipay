@@ -12,8 +12,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 	"sort"
 	"strings"
 	"sync"
@@ -158,92 +160,103 @@ func NewClient(httpClient *http.Client, privateKey *rsa.PrivateKey, publicKey *r
 // Relative URLs should always be specified without a preceding slash. If
 // specified, the value pointed to by body is JSON encoded and included as the
 // request body.
-func (c *Client) NewRequest(method, apiMethod string, bizContent interface{}, setters ...ValueOptions) (*http.Request, error) {
+func (c *Client) NewRequest(method string, bizContent interface{}, setters ...ValueOptions) (*http.Request, error) {
 	var (
-		buf *bytes.Buffer
-		err error
+		sign        string
+		contentType = "application/x-www-form-urlencoded"
+		buf         *bytes.Buffer
+		req         *http.Request
+		reader      io.Reader
+		err         error
 	)
-	buf = &bytes.Buffer{}
-	enc := json.NewEncoder(buf)
-	enc.SetEscapeHTML(false)
-	if bizContent != nil {
-		err = enc.Encode(bizContent)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	v := url.Values{}
 	v.Set("app_id", c.o.AppID)
-	v.Set("method", apiMethod)
+	v.Set("method", method)
 	v.Set("format", c.o.Format)
 	v.Set("charset", c.o.Charset)
 	v.Set("sign_type", c.o.SignType)
 	v.Set("timestamp", time.Now().Format(timeLayout))
 	v.Set("version", c.o.Version)
-	v.Set("biz_content", buf.String())
-
 	for _, setter := range setters {
 		setter(v)
 	}
-	return c.requestWithSign(method, v)
+	if bizContent != nil {
+		render, ok := bizContent.(MultiRender)
+		if ok {
+			var b bytes.Buffer
+			w := multipart.NewWriter(&b)
+			for key, r := range render.MultipartParams() {
+				var fw io.Writer
+				if x, ok := r.(*os.File); ok {
+					if fw, err = w.CreateFormFile(key, x.Name()); err != nil {
+						return nil, err
+					}
+				}
+				var n int64
+				if n, err = io.Copy(fw, r); err != nil {
 
-}
+					return nil, err
+				}
+				_ = n
+			}
+			params := render.Params()
+			sign, err = c.Sign(v)
+			if err != nil {
+				return nil, err
+			}
+			for k := range v {
+				params[k] = v.Get(k)
+			}
+			params["sign"] = sign
+			for key, val := range params {
+				_ = w.WriteField(key, val)
+			}
+			err = w.Close()
+			if err != nil {
+				return nil, err
+			}
+			reader = &b
+			contentType = w.FormDataContentType()
+		} else {
+			buf = &bytes.Buffer{}
+			enc := json.NewEncoder(buf)
+			enc.SetEscapeHTML(false)
+			err = enc.Encode(bizContent)
+			if err != nil {
+				return nil, err
+			}
+			v.Set("biz_content", buf.String())
+			sign, err = c.Sign(v)
+			if err != nil {
+				return nil, err
+			}
+			v.Set("sign", sign)
+			reader = strings.NewReader(v.Encode())
+		}
 
-func (c *Client) requestWithSign(method string, v url.Values) (*http.Request, error) {
-	var (
-		sign string
-		err  error
-		req  *http.Request
-	)
-	sign, err = c.Sign(v)
+	} else {
+		sign, err = c.Sign(v)
+		if err != nil {
+			return nil, err
+		}
+		v.Set("sign", sign)
+		reader = strings.NewReader(v.Encode())
+	}
+
+	req, err = http.NewRequest("POST", c.BaseURL.String(), reader)
 	if err != nil {
 		return nil, err
 	}
-	v.Set("sign", sign)
-
-	switch method {
-	case http.MethodPost:
-		req, err = http.NewRequest(method, c.BaseURL.String(), strings.NewReader(v.Encode()))
-		if err != nil {
-			return nil, err
-		}
-		v = req.URL.Query()
-		v.Set("charset", c.o.Charset)
-		req.URL.RawQuery = v.Encode()
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	case http.MethodGet:
-		req, err = http.NewRequest(method, c.BaseURL.String(), nil)
-		if err != nil {
-			return nil, err
-		}
-		req.URL.RawQuery = v.Encode()
-	default:
-		return nil, errors.New("unsupported method")
-	}
+	v = req.URL.Query()
+	v.Set("charset", c.o.Charset)
+	req.URL.RawQuery = v.Encode()
+	req.Header.Set("Content-Type", contentType)
 
 	if c.UserAgent != "" {
 		req.Header.Set("User-Agent", c.UserAgent)
 	}
 	return req, nil
-}
 
-// NewRequestWithoutBiz 某些接口不按照套路出牌
-func (c *Client) NewRequestWithoutBiz(method, apiMethod string, body interface{}, setters ...ValueOptions) (*http.Request, error) {
-	v, _ := Values(body)
-	v.Set("app_id", c.o.AppID)
-	v.Set("method", apiMethod)
-	v.Set("format", c.o.Format)
-	v.Set("charset", c.o.Charset)
-	v.Set("sign_type", c.o.SignType)
-	v.Set("timestamp", time.Now().Format(timeLayout))
-	v.Set("version", c.o.Version)
-
-	for _, setter := range setters {
-		setter(v)
-	}
-
-	return c.requestWithSign(method, v)
 }
 
 // Sign 参数签名

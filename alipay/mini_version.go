@@ -2,6 +2,9 @@ package alipay
 
 import (
 	"context"
+	"encoding/json"
+	"io"
+	"os"
 )
 
 // QueryVersionListResp 查询小程序列表返回值
@@ -12,7 +15,7 @@ type QueryVersionListResp struct {
 // QueryVersionList 查询小程序列表
 func (s *MiniService) QueryVersionList(ctx context.Context, opts ...ValueOptions) (*QueryVersionListResp, error) {
 	apiMethod := "alipay.open.mini.version.list.query"
-	req, err := s.client.NewRequest("GET", apiMethod, nil, opts...)
+	req, err := s.client.NewRequest(apiMethod, nil, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +36,7 @@ type DeleteVersionBiz struct {
 // DeleteVersion 小程序删除版本
 func (s *MiniService) DeleteVersion(ctx context.Context, biz *DeleteVersionBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.delete"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -47,18 +50,18 @@ func (s *MiniService) DeleteVersion(ctx context.Context, biz *DeleteVersionBiz, 
 // ApplyVersionAuditBiz 小程序提交审核
 type ApplyVersionAuditBiz struct {
 	LicenseName             string        `json:"license_name,omitempty"`
-	FirstLicensePic         []byte        `json:"first_license_pic,omitempty"`
-	SecondLicensePic        []byte        `json:"second_license_pic,omitempty"`
-	ThirdLicensePic         []byte        `json:"third_license_pic,omitempty"`
-	FourthLicensePic        []byte        `json:"fourth_license_pic,omitempty"`
-	FifthLicensePic         []byte        `json:"fifth_license_pic,omitempty"`
+	FirstLicensePic         *os.File      `json:"first_license_pic,omitempty"`
+	SecondLicensePic        *os.File      `json:"second_license_pic,omitempty"`
+	ThirdLicensePic         *os.File      `json:"third_license_pic,omitempty"`
+	FourthLicensePic        *os.File      `json:"fourth_license_pic,omitempty"`
+	FifthLicensePic         *os.File      `json:"fifth_license_pic,omitempty"`
 	LicenseValidDate        string        `json:"license_valid_date,omitempty"`
-	OutDoorPic              []byte        `json:"out_door_pic,omitempty"`
+	OutDoorPic              *os.File      `json:"out_door_pic,omitempty"`
 	AppVersion              string        `json:"app_version"`
 	AppName                 string        `json:"app_name,omitempty"`
 	AppEnglishName          string        `json:"app_english_name,omitempty"`
 	AppSlogan               string        `json:"app_slogan,omitempty"`
-	AppLogo                 []byte        `json:"app_logo,omitempty"`
+	AppLogo                 *os.File      `json:"app_logo,omitempty"`
 	AppCategoryIDs          string        `json:"app_category_ids,omitempty"`
 	AppDesc                 string        `json:"app_desc,omitempty"`
 	ServicePhone            string        `json:"service_phone,omitempty"`
@@ -67,19 +70,132 @@ type ApplyVersionAuditBiz struct {
 	Memo                    string        `json:"memo,omitempty"`
 	RegionType              string        `json:"region_type"`
 	ServiceRegionInfo       []*RegionInfo `json:"service_region_info,omitempty"`
-	FirstScreenShot         []byte        `json:"first_screen_shot,omitempty"`
-	SecondScreenShot        []byte        `json:"second_screen_shot,omitempty"`
-	ThirdScreenShot         []byte        `json:"third_screen_shot,omitempty"`
-	FourthScreenShot        []byte        `json:"fourth_screen_shot,omitempty"`
-	FifthScreenShot         []byte        `json:"fifth_screen_shot,omitempty"`
+	FirstScreenShot         *os.File      `json:"first_screen_shot,omitempty"`
+	SecondScreenShot        *os.File      `json:"second_screen_shot,omitempty"`
+	ThirdScreenShot         *os.File      `json:"third_screen_shot,omitempty"`
+	FourthScreenShot        *os.File      `json:"fourth_screen_shot,omitempty"`
+	FifthScreenShot         *os.File      `json:"fifth_screen_shot,omitempty"`
 	LicenseNo               string        `json:"license_no,omitempty"`
-	FirstSpecialLicensePic  []byte        `json:"first_special_license_pic,omitempty"`
-	SecondSpecialLicensePic []byte        `json:"second_special_license_pic,omitempty"`
-	ThirdSpecialLicensePic  []byte        `json:"third_special_license_pic,omitempty"`
+	FirstSpecialLicensePic  *os.File      `json:"first_special_license_pic,omitempty"`
+	SecondSpecialLicensePic *os.File      `json:"second_special_license_pic,omitempty"`
+	ThirdSpecialLicensePic  *os.File      `json:"third_special_license_pic,omitempty"`
 	TestAccount             string        `json:"test_accout,omitempty"` // 官方拼写错误
 	TestPassword            string        `json:"test_password,omitempty"`
-	TestFileName            []byte        `json:"test_file_name,omitempty"`
+	TestFileName            *os.File      `json:"test_file_name,omitempty"`
 	BundleID                string        `json:"bundle_id,omitempty"`
+}
+
+func (a ApplyVersionAuditBiz) Params() map[string]string {
+	params := make(map[string]string)
+	if a.LicenseName != "" {
+		params["license_name"] = a.LicenseName
+	}
+	if a.LicenseValidDate != "" {
+		params["license_valid_date"] = a.LicenseValidDate
+	}
+	if a.AppVersion != "" {
+		params["app_version"] = a.AppVersion
+	}
+	if a.AppName != "" {
+		params["app_name"] = a.AppName
+	}
+	if a.AppEnglishName != "" {
+		params["app_english_name"] = a.AppEnglishName
+	}
+	if a.AppSlogan != "" {
+		params["app_slogan"] = a.AppSlogan
+	}
+	if a.AppCategoryIDs != "" {
+		params["app_category_ids"] = a.AppCategoryIDs
+	}
+	if a.AppDesc != "" {
+		params["app_desc"] = a.AppDesc
+	}
+	if a.ServicePhone != "" {
+		params["service_phone"] = a.ServicePhone
+	}
+	if a.ServiceEmail != "" {
+		params["service_email"] = a.ServiceEmail
+	}
+	if a.VersionDesc != "" {
+		params["version_desc"] = a.VersionDesc
+	}
+	if a.Memo != "" {
+		params["memo"] = a.Memo
+	}
+	if a.RegionType != "" {
+		params["region_type"] = a.RegionType
+	}
+	if a.ServiceRegionInfo != nil {
+		serviceRegionInfo, _ := json.Marshal(a.ServiceRegionInfo)
+		params["service_region_info"] = string(serviceRegionInfo)
+	}
+	if a.LicenseNo != "" {
+		params["license_no"] = a.LicenseNo
+	}
+	if a.TestAccount != "" {
+		params["test_accout"] = a.TestAccount
+	}
+	if a.TestPassword != "" {
+		params["test_password"] = a.TestPassword
+	}
+	if a.BundleID != "" {
+		params["bundle_id"] = a.BundleID
+	}
+	return params
+}
+
+func (a ApplyVersionAuditBiz) MultipartParams() map[string]io.Reader {
+	params := make(map[string]io.Reader)
+	if a.FirstLicensePic != nil {
+		params["first_license_pic"] = a.FirstLicensePic
+	}
+	if a.SecondLicensePic != nil {
+		params["second_license_pic"] = a.SecondLicensePic
+	}
+	if a.ThirdLicensePic != nil {
+		params["third_license_pic"] = a.ThirdLicensePic
+	}
+	if a.FourthLicensePic != nil {
+		params["fourth_license_pic"] = a.FourthLicensePic
+	}
+	if a.FifthLicensePic != nil {
+		params["fifth_license_pic"] = a.FifthLicensePic
+	}
+	if a.OutDoorPic != nil {
+		params["out_door_pic"] = a.OutDoorPic
+	}
+	if a.AppLogo != nil {
+		params["app_logo"] = a.AppLogo
+	}
+	if a.FirstScreenShot != nil {
+		params["first_screen_shot"] = a.FirstScreenShot
+	}
+	if a.SecondScreenShot != nil {
+		params["second_screen_shot"] = a.SecondScreenShot
+	}
+	if a.ThirdScreenShot != nil {
+		params["third_screen_shot"] = a.ThirdScreenShot
+	}
+	if a.FourthScreenShot != nil {
+		params["fourth_screen_shot"] = a.FourthScreenShot
+	}
+	if a.FifthScreenShot != nil {
+		params["fifth_screen_shot"] = a.FifthScreenShot
+	}
+	if a.FirstSpecialLicensePic != nil {
+		params["first_special_license_pic"] = a.FirstSpecialLicensePic
+	}
+	if a.SecondSpecialLicensePic != nil {
+		params["second_special_license_pic"] = a.SecondSpecialLicensePic
+	}
+	if a.ThirdSpecialLicensePic != nil {
+		params["third_special_license_pic"] = a.ThirdSpecialLicensePic
+	}
+	if a.TestFileName != nil {
+		params["test_file_name"] = a.TestFileName
+	}
+	return params
 }
 
 // RegionInfo 省市区信息，当区域类型为LOCATION时，不能为空
@@ -95,7 +211,7 @@ type RegionInfo struct {
 // ApplyVersionAudit 小程序提交审核
 func (s *MiniService) ApplyVersionAudit(ctx context.Context, biz *ApplyVersionAuditBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.audit.apply"
-	req, err := s.client.NewRequestWithoutBiz("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -115,7 +231,7 @@ type CancelVersionAuditBiz struct {
 // CancelVersionAudit 小程序撤销审核
 func (s *MiniService) CancelVersionAudit(ctx context.Context, biz *CancelVersionAuditBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.audit.cancel"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -135,7 +251,7 @@ type CancelVersionAuditedBiz struct {
 // CancelVersionAudited 小程序退回开发
 func (s *MiniService) CancelVersionAudited(ctx context.Context, biz *CancelVersionAuditedBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.audited.cancel"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -155,7 +271,7 @@ type OnlineVersionBiz struct {
 // OnlineVersion 小程序上架
 func (s *MiniService) OnlineVersion(ctx context.Context, biz *OnlineVersionBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.online"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -175,7 +291,7 @@ type OfflineVersionBiz struct {
 // OfflineVersion 小程序下架
 func (s *MiniService) OfflineVersion(ctx context.Context, biz *OfflineVersionBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.offline"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -195,7 +311,7 @@ type RollbackVersionBiz struct {
 // RollbackVersion 小程序回滚
 func (s *MiniService) RollbackVersion(ctx context.Context, biz *RollbackVersionBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.rollback"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -216,7 +332,7 @@ type OnlineGrayVersionBiz struct {
 // OnlineGrayVersion 小程序灰度上架
 func (s *MiniService) OnlineGrayVersion(ctx context.Context, biz *OnlineGrayVersionBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.gray.online"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -236,7 +352,7 @@ type CancelGrayVersionBiz struct {
 // CancelGrayVersion 小程序灰度上架
 func (s *MiniService) CancelGrayVersion(ctx context.Context, biz *CancelGrayVersionBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.gray.cancel"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -259,7 +375,7 @@ type UploadVersionBiz struct {
 // UploadVersion 小程序基于模板上传版本
 func (s *MiniService) UploadVersion(ctx context.Context, biz *UploadVersionBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.version.upload"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -324,7 +440,7 @@ type VersionDetail struct {
 // QueryVersionDetail 小程序版本详情查询
 func (s *MiniService) QueryVersionDetail(ctx context.Context, biz *QueryVersionDetailBiz, opts ...ValueOptions) (*VersionDetail, error) {
 	apiMethod := "alipay.open.mini.version.detail.query"
-	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +467,7 @@ type QueryVersionBuildResp struct {
 // QueryVersionBuild 小程序查询版本构建状态
 func (s *MiniService) QueryVersionBuild(ctx context.Context, biz *QueryVersionBuildBiz, opts ...ValueOptions) (*QueryVersionBuildResp, error) {
 	apiMethod := "alipay.open.mini.version.detail.query"
-	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}

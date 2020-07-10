@@ -31,7 +31,7 @@ type TemplateUsageInfo struct {
 // QueryTemplateUsage 查询使用模板的小程序列表
 func (s *MiniService) QueryTemplateUsage(ctx context.Context, biz *QueryTemplateUsageBiz, opts ...ValueOptions) (*QueryTemplateUsageResp, error) {
 	apiMethod := "alipay.open.mini.template.usage.query"
-	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}

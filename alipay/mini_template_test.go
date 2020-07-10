@@ -13,7 +13,7 @@ func TestMiniService_QueryTemplateUsage(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_template_usage_query_response": {
 								"code": "10000",
@@ -53,7 +53,7 @@ func TestMiniService_QueryTemplateUsage_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_template_usage_query_response": {
 								"code": "20000",

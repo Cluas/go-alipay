@@ -13,7 +13,7 @@ func TestAppService_CreateMember(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_members_create_response": {
 								"code": "10000",
@@ -37,7 +37,7 @@ func TestAppService_CreateMember_error(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_members_create_response": {
 							        "code": "20000",
@@ -63,7 +63,7 @@ func TestAppService_DeleteMember(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_members_delete_response": {
 								"code": "10000",
@@ -86,7 +86,7 @@ func TestAppService_DeleteMember_error(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_members_delete_response": {
 							        "code": "20000",
@@ -112,7 +112,7 @@ func TestAppService_QueryAppMembers(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_members_query_response": {
 								"code": "10000",
@@ -159,7 +159,7 @@ func TestAppService_QueryAppMembers_error(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_members_query_response": {
 							        "code": "20000",
@@ -181,7 +181,7 @@ func TestAppService_CreateAppQRCode(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_qrcode_create_response": {
 								"code": "10000",
@@ -212,7 +212,7 @@ func TestAppService_CreateAppQRCode_error(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_app_qrcode_create_response": {
 							        "code": "20000",

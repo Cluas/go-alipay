@@ -13,7 +13,7 @@ func TestMiniService_CancelExperience(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_experience_cancel_response": {
 								"code": "10000",
@@ -37,7 +37,7 @@ func TestMiniService_CancelExperience_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_experience_cancel_response": {
 							        "code": "20000",
@@ -63,7 +63,7 @@ func TestMiniService_CreateExperience(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_experience_create_response": {
 								"code": "10000",
@@ -86,7 +86,7 @@ func TestMiniService_CreateExperience_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_experience_create_response": {
 							        "code": "20000",
@@ -112,7 +112,7 @@ func TestMiniService_QueryExperience(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_experience_query_response": {
 								"code": "10000",
@@ -144,7 +144,7 @@ func TestMiniService_QueryExperience_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "GET")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_experience_query_response": {
 							        "code": "20000",

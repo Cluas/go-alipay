@@ -20,7 +20,7 @@ type BindQrCodeResp struct {
 // BindQrCode 关联普通二维码
 func (s *MiniService) BindQrCode(ctx context.Context, biz *BindQrCodeBiz, opts ...ValueOptions) (*BindQrCodeResp, error) {
 	apiMethod := "alipay.open.mini.qrcode.bind"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ type UnbindQrCodeBiz struct {
 // UnbindQrCode 删除已关联普通二维码
 func (s *MiniService) UnbindQrCode(ctx context.Context, biz *UnbindQrCodeBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.qrcode.unbind"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}

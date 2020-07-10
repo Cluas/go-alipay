@@ -17,7 +17,7 @@ type CreateExperienceBiz struct {
 // CreateExperience 小程序生成体验版
 func (s *MiniService) CreateExperience(ctx context.Context, biz *CreateExperienceBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.experience.create"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ type ExperienceStatus struct {
 // QueryExperience 小程序体验版状态查询
 func (s *MiniService) QueryExperience(ctx context.Context, biz *QueryExperienceBiz, opts ...ValueOptions) (*ExperienceStatus, error) {
 	apiMethod := "alipay.open.mini.experience.query"
-	req, err := s.client.NewRequest("GET", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ type CancelExperienceBiz struct {
 // CancelExperience 小程序取消体验版
 func (s *MiniService) CancelExperience(ctx context.Context, biz *CancelExperienceBiz, opts ...ValueOptions) error {
 	apiMethod := "alipay.open.mini.experience.cancel"
-	req, err := s.client.NewRequest("POST", apiMethod, biz, opts...)
+	req, err := s.client.NewRequest(apiMethod, biz, opts...)
 	if err != nil {
 		return err
 	}

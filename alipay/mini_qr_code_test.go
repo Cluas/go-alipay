@@ -13,7 +13,7 @@ func TestMiniService_BindQrCode(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_qrcode_bind_response": {
 								"code": "10000",
@@ -44,7 +44,7 @@ func TestMiniService_BindQrCode_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 							"alipay_open_mini_qrcode_bind_response": {
 								"code": "20000",
@@ -69,7 +69,7 @@ func TestMiniService_UnbindQrCode(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 						"alipay_open_mini_qrcode_unbind_response": {
 							"code": "10000",
@@ -89,7 +89,7 @@ func TestMiniService_UnbindQrCode_failed(t *testing.T) {
 	defer tearDown()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		testMethod(t, r, "POST")
+
 		fmt.Fprint(w, `{
 								"alipay_open_mini_qrcode_unbind_response": {
 									"code": "20000",
