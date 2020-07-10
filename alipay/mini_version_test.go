@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"reflect"
 	"testing"
 )
@@ -25,18 +24,18 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 
 	err := client.Mini.ApplyVersionAudit(context.Background(), &ApplyVersionAuditBiz{
 		LicenseName:      "营业执照名称",
-		FirstLicensePic:  os.NewFile(0, "图片1"),
-		SecondLicensePic: os.NewFile(0, "图片2"),
-		ThirdLicensePic:  os.NewFile(0, "图片3"),
-		FourthLicensePic: os.NewFile(0, "图片4"),
-		FifthLicensePic:  os.NewFile(0, "图片5"),
+		FirstLicensePic:  nil,
+		SecondLicensePic: nil,
+		ThirdLicensePic:  nil,
+		FourthLicensePic: nil,
+		FifthLicensePic:  nil,
 		LicenseValidDate: "9999-12-31",
-		OutDoorPic:       os.NewFile(0, "OutDoorPic"),
+		OutDoorPic:       nil,
 		AppVersion:       "0.0.1",
 		AppName:          "小程序示例",
 		AppEnglishName:   "demo example",
 		AppSlogan:        "这是一个支付示例",
-		AppLogo:          os.NewFile(0, "AppLogo"),
+		AppLogo:          nil,
 		AppCategoryIDs:   "11_12;12_13",
 		AppDesc:          "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:     "13110101010",
@@ -54,18 +53,18 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 				AreaName:     "余杭区",
 			},
 		},
-		FirstScreenShot:         os.NewFile(0, "FirstScreenShot"),
-		SecondScreenShot:        os.NewFile(0, "SecondScreenShot"),
-		ThirdScreenShot:         os.NewFile(0, "ThirdScreenShot"),
-		FourthScreenShot:        os.NewFile(0, "FourthScreenShot"),
-		FifthScreenShot:         os.NewFile(0, "FifthScreenShot"),
+		FirstScreenShot:         nil,
+		SecondScreenShot:        nil,
+		ThirdScreenShot:         nil,
+		FourthScreenShot:        nil,
+		FifthScreenShot:         nil,
 		LicenseNo:               "LicenseNo",
-		FirstSpecialLicensePic:  os.NewFile(0, "FirstSpecialLicensePic"),
-		SecondSpecialLicensePic: os.NewFile(0, "SecondSpecialLicensePic"),
-		ThirdSpecialLicensePic:  os.NewFile(0, "ThirdSpecialLicensePic"),
+		FirstSpecialLicensePic:  nil,
+		SecondSpecialLicensePic: nil,
+		ThirdSpecialLicensePic:  nil,
 		TestAccount:             "TestAccount",
 		TestPassword:            "TestPassword",
-		TestFileName:            os.NewFile(0, "TestFileName"),
+		TestFileName:            nil,
 		BundleID:                "com.alipay.alipaywallet",
 	})
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"reflect"
 	"testing"
 )
@@ -76,7 +75,7 @@ func TestMiniService_ModifyBaseInfo(t *testing.T) {
 		AppName:         "小程序demo",
 		AppEnglishName:  "demoexample",
 		AppSlogan:       "这是一个小程序示例",
-		AppLogo:         os.NewFile(0, "123"),
+		AppLogo:         nil,
 		AppCategoryIDs:  "11_12;12_13",
 		AppDesc:         "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:    "13110101010",
@@ -107,7 +106,7 @@ func TestMiniService_ModifyBaseInfo_failed(t *testing.T) {
 		AppName:         "小程序demo",
 		AppEnglishName:  "demoexample",
 		AppSlogan:       "这是一个小程序示例",
-		AppLogo:         os.NewFile(0, "123"),
+		AppLogo:         nil,
 		AppCategoryIDs:  "11_12;12_13",
 		AppDesc:         "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:    "13110101010",
