@@ -192,24 +192,24 @@ func (c *Client) NewRequest(method string, bizContent interface{}, setters ...Va
 						return nil, err
 					}
 				}
-				var n int64
-				if n, err = io.Copy(fw, r); err != nil {
-
+				if _, err = io.Copy(fw, r); err != nil {
 					return nil, err
 				}
-				_ = n
 			}
 			params := render.Params()
+			for key, val := range params {
+				v.Set(key, val)
+			}
 			sign, err = c.Sign(v)
 			if err != nil {
 				return nil, err
 			}
+			v.Set("sign", sign)
 			for k := range v {
 				params[k] = v.Get(k)
 			}
-			params["sign"] = sign
-			for key, val := range params {
-				_ = w.WriteField(key, val)
+			for k := range v {
+				_ = w.WriteField(k, v.Get(k))
 			}
 			err = w.Close()
 			if err != nil {
