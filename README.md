@@ -7,7 +7,7 @@ Go 支付宝小程序SDK
 [![Test Coverage](https://codecov.io/gh/Cluas/go-alipay/branch/master/graph/badge.svg)](https://codecov.io/gh/Cluas/go-alipay)
 
 
-微信开放平台小程序第三方接口支持
+支付宝开放平台小程序第三方接口支持
 
 ### 简单示例
 ```go
