@@ -15,7 +15,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
 	"sort"
 	"strings"
 	"sync"
@@ -155,6 +154,17 @@ func NewClient(httpClient *http.Client, privateKey *rsa.PrivateKey, publicKey *r
 	return c
 }
 
+// File wrapped file content
+type File struct {
+	Name    string
+	Content io.Reader
+}
+
+// Read proxy Content Read
+func (f File) Read(p []byte) (n int, err error) {
+	return f.Content.Read(p)
+}
+
 // NewRequest creates an API request. A relative URL can be provided in urlStr,
 // in which case it is resolved relative to the BaseURL of the Client.
 // Relative URLs should always be specified without a preceding slash. If
@@ -187,8 +197,8 @@ func (c *Client) NewRequest(method string, bizContent interface{}, setters ...Va
 			w := multipart.NewWriter(&b)
 			for key, r := range render.MultipartParams() {
 				var fw io.Writer
-				if x, ok := r.(*os.File); ok {
-					if fw, err = w.CreateFormFile(key, x.Name()); err != nil {
+				if x, ok := r.(*File); ok {
+					if fw, err = w.CreateFormFile(key, x.Name); err != nil {
 						return nil, err
 					}
 				}

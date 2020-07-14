@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -72,10 +73,13 @@ func TestMiniService_ModifyBaseInfo(t *testing.T) {
 	})
 
 	err := client.Mini.ModifyBaseInfo(context.Background(), &ModifyBaseInfoBiz{
-		AppName:         "小程序demo",
-		AppEnglishName:  "demoexample",
-		AppSlogan:       "这是一个小程序示例",
-		AppLogo:         nil,
+		AppName:        "小程序demo",
+		AppEnglishName: "demoexample",
+		AppSlogan:      "这是一个小程序示例",
+		AppLogo: &File{
+			Name:    "测试logo",
+			Content: bytes.NewReader([]byte("测试logo")),
+		},
 		AppCategoryIDs:  "11_12;12_13",
 		AppDesc:         "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:    "13110101010",
@@ -103,10 +107,13 @@ func TestMiniService_ModifyBaseInfo_failed(t *testing.T) {
 						}`)
 	})
 	err := client.Mini.ModifyBaseInfo(context.Background(), &ModifyBaseInfoBiz{
-		AppName:         "小程序demo",
-		AppEnglishName:  "demoexample",
-		AppSlogan:       "这是一个小程序示例",
-		AppLogo:         nil,
+		AppName:        "小程序demo",
+		AppEnglishName: "demoexample",
+		AppSlogan:      "这是一个小程序示例",
+		AppLogo: &File{
+			Name:    "测试logo",
+			Content: bytes.NewReader([]byte("测试logo")),
+		},
 		AppCategoryIDs:  "11_12;12_13",
 		AppDesc:         "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
 		ServicePhone:    "13110101010",

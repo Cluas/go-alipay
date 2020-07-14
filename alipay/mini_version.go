@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"os"
 )
 
 // QueryVersionListResp 查询小程序列表返回值
@@ -50,18 +49,18 @@ func (s *MiniService) DeleteVersion(ctx context.Context, biz *DeleteVersionBiz, 
 // ApplyVersionAuditBiz 小程序提交审核
 type ApplyVersionAuditBiz struct {
 	LicenseName             string        `json:"license_name,omitempty"`
-	FirstLicensePic         *os.File      `json:"first_license_pic,omitempty"`
-	SecondLicensePic        *os.File      `json:"second_license_pic,omitempty"`
-	ThirdLicensePic         *os.File      `json:"third_license_pic,omitempty"`
-	FourthLicensePic        *os.File      `json:"fourth_license_pic,omitempty"`
-	FifthLicensePic         *os.File      `json:"fifth_license_pic,omitempty"`
+	FirstLicensePic         *File         `json:"first_license_pic,omitempty"`
+	SecondLicensePic        *File         `json:"second_license_pic,omitempty"`
+	ThirdLicensePic         *File         `json:"third_license_pic,omitempty"`
+	FourthLicensePic        *File         `json:"fourth_license_pic,omitempty"`
+	FifthLicensePic         *File         `json:"fifth_license_pic,omitempty"`
 	LicenseValidDate        string        `json:"license_valid_date,omitempty"`
-	OutDoorPic              *os.File      `json:"out_door_pic,omitempty"`
+	OutDoorPic              *File         `json:"out_door_pic,omitempty"`
 	AppVersion              string        `json:"app_version"`
 	AppName                 string        `json:"app_name,omitempty"`
 	AppEnglishName          string        `json:"app_english_name,omitempty"`
 	AppSlogan               string        `json:"app_slogan,omitempty"`
-	AppLogo                 *os.File      `json:"app_logo,omitempty"`
+	AppLogo                 *File         `json:"app_logo,omitempty"`
 	AppCategoryIDs          string        `json:"app_category_ids,omitempty"`
 	AppDesc                 string        `json:"app_desc,omitempty"`
 	ServicePhone            string        `json:"service_phone,omitempty"`
@@ -70,18 +69,18 @@ type ApplyVersionAuditBiz struct {
 	Memo                    string        `json:"memo,omitempty"`
 	RegionType              string        `json:"region_type"`
 	ServiceRegionInfo       []*RegionInfo `json:"service_region_info,omitempty"`
-	FirstScreenShot         *os.File      `json:"first_screen_shot,omitempty"`
-	SecondScreenShot        *os.File      `json:"second_screen_shot,omitempty"`
-	ThirdScreenShot         *os.File      `json:"third_screen_shot,omitempty"`
-	FourthScreenShot        *os.File      `json:"fourth_screen_shot,omitempty"`
-	FifthScreenShot         *os.File      `json:"fifth_screen_shot,omitempty"`
+	FirstScreenShot         *File         `json:"first_screen_shot,omitempty"`
+	SecondScreenShot        *File         `json:"second_screen_shot,omitempty"`
+	ThirdScreenShot         *File         `json:"third_screen_shot,omitempty"`
+	FourthScreenShot        *File         `json:"fourth_screen_shot,omitempty"`
+	FifthScreenShot         *File         `json:"fifth_screen_shot,omitempty"`
 	LicenseNo               string        `json:"license_no,omitempty"`
-	FirstSpecialLicensePic  *os.File      `json:"first_special_license_pic,omitempty"`
-	SecondSpecialLicensePic *os.File      `json:"second_special_license_pic,omitempty"`
-	ThirdSpecialLicensePic  *os.File      `json:"third_special_license_pic,omitempty"`
+	FirstSpecialLicensePic  *File         `json:"first_special_license_pic,omitempty"`
+	SecondSpecialLicensePic *File         `json:"second_special_license_pic,omitempty"`
+	ThirdSpecialLicensePic  *File         `json:"third_special_license_pic,omitempty"`
 	TestAccount             string        `json:"test_accout,omitempty"` // 官方拼写错误
 	TestPassword            string        `json:"test_password,omitempty"`
-	TestFileName            *os.File      `json:"test_file_name,omitempty"`
+	TestFileName            *File         `json:"test_file_name,omitempty"`
 	BundleID                string        `json:"bundle_id,omitempty"`
 }
 

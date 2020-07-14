@@ -3,7 +3,6 @@ package alipay
 import (
 	"context"
 	"io"
-	"os"
 )
 
 // MiniService 小程序服务
@@ -42,15 +41,15 @@ func (s *MiniService) QueryBaseInfo(ctx context.Context, opts ...ValueOptions) (
 
 // ModifyBaseInfoBiz 小程序修改基础信息
 type ModifyBaseInfoBiz struct {
-	AppName         string   `json:"app_name,omitempty"`          // 小程序应用名称
-	AppEnglishName  string   `json:"app_english_name,omitempty"`  // 小程序应用英文名称
-	AppSlogan       string   `json:"app_slogan,omitempty"`        // 小程序应用简介，一句话描述小程序功能
-	AppLogo         *os.File `json:"app_logo,omitempty"`          // 小程序应用logo图标，图片格式必须为：png、jpeg、jpg，建议上传像素为180*180
-	AppCategoryIDs  string   `json:"app_category_ids,omitempty"`  // 11_12;12_13。小程序类目，格式为 第一个一级类目_第一个二级类目;第二个一级类目_第二个二级类目，详细类目可以参考https://docs.alipay.com/isv/10325
-	AppDesc         string   `json:"app_desc,omitempty"`          // 小程序应用描述，20-200个字
-	ServicePhone    string   `json:"service_phone,omitempty"`     // 小程序客服电话
-	ServiceEmail    string   `json:"service_email,omitempty"`     // 小程序客服邮箱
-	MiniCategoryIDs string   `json:"mini_category_ids,omitempty"` // 新小程序前台类目，一级与二级、三级用下划线隔开，最多可以选四个类目，类目之间;隔开。使用后不再读取app_category_ids值，老前台类目将废弃
+	AppName         string `json:"app_name,omitempty"`          // 小程序应用名称
+	AppEnglishName  string `json:"app_english_name,omitempty"`  // 小程序应用英文名称
+	AppSlogan       string `json:"app_slogan,omitempty"`        // 小程序应用简介，一句话描述小程序功能
+	AppLogo         *File  `json:"app_logo,omitempty"`          // 小程序应用logo图标，图片格式必须为：png、jpeg、jpg，建议上传像素为180*180
+	AppCategoryIDs  string `json:"app_category_ids,omitempty"`  // 11_12;12_13。小程序类目，格式为 第一个一级类目_第一个二级类目;第二个一级类目_第二个二级类目，详细类目可以参考https://docs.alipay.com/isv/10325
+	AppDesc         string `json:"app_desc,omitempty"`          // 小程序应用描述，20-200个字
+	ServicePhone    string `json:"service_phone,omitempty"`     // 小程序客服电话
+	ServiceEmail    string `json:"service_email,omitempty"`     // 小程序客服邮箱
+	MiniCategoryIDs string `json:"mini_category_ids,omitempty"` // 新小程序前台类目，一级与二级、三级用下划线隔开，最多可以选四个类目，类目之间;隔开。使用后不再读取app_category_ids值，老前台类目将废弃
 }
 
 type MultiRender interface {

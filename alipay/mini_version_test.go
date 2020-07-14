@@ -1,6 +1,7 @@
 package alipay
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -23,26 +24,47 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 	})
 
 	err := client.Mini.ApplyVersionAudit(context.Background(), &ApplyVersionAuditBiz{
-		LicenseName:      "营业执照名称",
-		FirstLicensePic:  nil,
-		SecondLicensePic: nil,
-		ThirdLicensePic:  nil,
-		FourthLicensePic: nil,
-		FifthLicensePic:  nil,
+		LicenseName: "营业执照名称",
+		FirstLicensePic: &File{
+			Name:    "FirstLicensePic",
+			Content: bytes.NewReader([]byte("FirstLicensePic")),
+		},
+		SecondLicensePic: &File{
+			Name:    "SecondLicensePic",
+			Content: bytes.NewReader([]byte("SecondLicensePic")),
+		},
+		ThirdLicensePic: &File{
+			Name:    "ThirdLicensePic",
+			Content: bytes.NewReader([]byte("ThirdLicensePic")),
+		},
+		FourthLicensePic: &File{
+			Name:    "FourthLicensePic",
+			Content: bytes.NewReader([]byte("FourthLicensePic")),
+		},
+		FifthLicensePic: &File{
+			Name:    "FifthLicensePic",
+			Content: bytes.NewReader([]byte("FifthLicensePic")),
+		},
 		LicenseValidDate: "9999-12-31",
-		OutDoorPic:       nil,
-		AppVersion:       "0.0.1",
-		AppName:          "小程序示例",
-		AppEnglishName:   "demo example",
-		AppSlogan:        "这是一个支付示例",
-		AppLogo:          nil,
-		AppCategoryIDs:   "11_12;12_13",
-		AppDesc:          "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
-		ServicePhone:     "13110101010",
-		ServiceEmail:     "example@mail.com",
-		VersionDesc:      "小程序版本描述小程序版本描述小程序版本描述小程序版本描述小程序版本描述小程序版本描述",
-		Memo:             "小程序示例",
-		RegionType:       "LOCATION",
+		OutDoorPic: &File{
+			Name:    "OutDoorPic",
+			Content: bytes.NewReader([]byte("OutDoorPic")),
+		},
+		AppVersion:     "0.0.1",
+		AppName:        "小程序示例",
+		AppEnglishName: "demo example",
+		AppSlogan:      "这是一个支付示例",
+		AppLogo: &File{
+			Name:    "AppLogo",
+			Content: bytes.NewReader([]byte("AppLogo")),
+		},
+		AppCategoryIDs: "11_12;12_13",
+		AppDesc:        "这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述这是一个小程序的描述",
+		ServicePhone:   "13110101010",
+		ServiceEmail:   "example@mail.com",
+		VersionDesc:    "小程序版本描述小程序版本描述小程序版本描述小程序版本描述小程序版本描述小程序版本描述",
+		Memo:           "小程序示例",
+		RegionType:     "LOCATION",
 		ServiceRegionInfo: []*RegionInfo{
 			{
 				ProvinceCode: "310000",
@@ -53,19 +75,46 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 				AreaName:     "余杭区",
 			},
 		},
-		FirstScreenShot:         nil,
-		SecondScreenShot:        nil,
-		ThirdScreenShot:         nil,
-		FourthScreenShot:        nil,
-		FifthScreenShot:         nil,
-		LicenseNo:               "LicenseNo",
-		FirstSpecialLicensePic:  nil,
-		SecondSpecialLicensePic: nil,
-		ThirdSpecialLicensePic:  nil,
-		TestAccount:             "TestAccount",
-		TestPassword:            "TestPassword",
-		TestFileName:            nil,
-		BundleID:                "com.alipay.alipaywallet",
+		FirstScreenShot: &File{
+			Name:    "FirstScreenShot",
+			Content: bytes.NewReader([]byte("FirstScreenShot")),
+		},
+		SecondScreenShot: &File{
+			Name:    "SecondScreenShot",
+			Content: bytes.NewReader([]byte("SecondScreenShot")),
+		},
+		ThirdScreenShot: &File{
+			Name:    "ThirdScreenShot",
+			Content: bytes.NewReader([]byte("ThirdScreenShot")),
+		},
+		FourthScreenShot: &File{
+			Name:    "FourthScreenShot",
+			Content: bytes.NewReader([]byte("FourthScreenShot")),
+		},
+		FifthScreenShot: &File{
+			Name:    "FifthScreenShot",
+			Content: bytes.NewReader([]byte("FifthScreenShot")),
+		},
+		LicenseNo: "LicenseNo",
+		FirstSpecialLicensePic: &File{
+			Name:    "FirstSpecialLicensePic",
+			Content: bytes.NewReader([]byte("FirstSpecialLicensePic")),
+		},
+		SecondSpecialLicensePic: &File{
+			Name:    "SecondSpecialLicensePic",
+			Content: bytes.NewReader([]byte("SecondSpecialLicensePic")),
+		},
+		ThirdSpecialLicensePic: &File{
+			Name:    "ThirdSpecialLicensePic",
+			Content: bytes.NewReader([]byte("ThirdSpecialLicensePic")),
+		},
+		TestAccount:  "TestAccount",
+		TestPassword: "TestPassword",
+		TestFileName: &File{
+			Name:    "TestFileName",
+			Content: bytes.NewReader([]byte("TestFileName")),
+		},
+		BundleID: "com.alipay.alipaywallet",
 	})
 
 	if err != nil {
