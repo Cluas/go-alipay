@@ -216,9 +216,6 @@ func (c *Client) NewRequest(method string, bizContent interface{}, setters ...Va
 			}
 			v.Set("sign", sign)
 			for k := range v {
-				params[k] = v.Get(k)
-			}
-			for k := range v {
 				_ = w.WriteField(k, v.Get(k))
 			}
 			err = w.Close()
