@@ -95,7 +95,8 @@ func TestMiniService_ApplyVersionAudit(t *testing.T) {
 			Name:    "FifthScreenShot",
 			Content: bytes.NewReader([]byte("FifthScreenShot")),
 		},
-		LicenseNo: "LicenseNo",
+		LicenseNo:       "LicenseNo",
+		MiniCategoryIDs: "MiniCategoryIDs",
 		FirstSpecialLicensePic: &File{
 			Name:    "FirstSpecialLicensePic",
 			Content: bytes.NewReader([]byte("FirstSpecialLicensePic")),

@@ -75,6 +75,7 @@ type ApplyVersionAuditBiz struct {
 	FourthScreenShot        *File         `json:"fourth_screen_shot,omitempty"`
 	FifthScreenShot         *File         `json:"fifth_screen_shot,omitempty"`
 	LicenseNo               string        `json:"license_no,omitempty"`
+	MiniCategoryIDs         string        `json:"mini_category_ids,omitempty"`
 	FirstSpecialLicensePic  *File         `json:"first_special_license_pic,omitempty"`
 	SecondSpecialLicensePic *File         `json:"second_special_license_pic,omitempty"`
 	ThirdSpecialLicensePic  *File         `json:"third_special_license_pic,omitempty"`
@@ -131,6 +132,9 @@ func (a ApplyVersionAuditBiz) Params() map[string]string {
 	}
 	if a.LicenseNo != "" {
 		params["license_no"] = a.LicenseNo
+	}
+	if a.MiniCategoryIDs != "" {
+		params["mini_category_ids"] = a.MiniCategoryIDs
 	}
 	if a.TestAccount != "" {
 		params["test_accout"] = a.TestAccount
